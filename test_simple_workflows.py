@@ -59,14 +59,12 @@ def test_boolean_workflow(par_dict, notebook_dir):
 
     # This test is straight forward. This data product is a JSON.
     test_output = run(test_path, par_dict)
-    print(test_output)
     assert "result" in test_output.keys()
     assert test_output["result"] == "FALSE"
 
 
 def test_lc_workflow(par_dict, notebook_dir):
     test_path = os.path.join(notebook_dir, "simple_lc_workflow.ipynb")
-    test_output = run(test_path, par_dict)
-    print(type(test_output))
-    assert True
-    #assert "result" in test_output.keys()
+        
+    test_output: str = run(test_path, par_dict)
+    assert "result" in test_output.keys()
