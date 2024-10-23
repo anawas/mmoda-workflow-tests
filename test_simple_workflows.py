@@ -21,15 +21,24 @@ def par_dict():
 
 
 @pytest.fixture
-def notebook_dir():
-    base_dir = os.path.abspath(__file__)
-    return os.path.join(os.path.dirname(base_dir), "test_notebooks")
+def notebook_path():
+    def _notebook_path(notebook_name: str):
+        base_dir = os.path.abspath(__file__)
+        base_dir = os.path.join(os.path.dirname(base_dir), "test_notebooks")
+        return os.path.join(base_dir, f"simple_{notebook_name}_workflow.ipynb")
+    
+    return _notebook_path
 
 
-def test_picture_workflow(par_dict, notebook_dir):
+def test_args(notebook_path):
+    path = notebook_path("test")
+    assert "simple_test_workflow" in path
+
+
+def test_picture_workflow(par_dict, notebook_path):
     # This workflows tests if an image product is returned. We cannot test.
 
-    test_path = os.path.join(notebook_dir, "simple_picture_workflow.ipynb")
+    test_path = notebook_path("picture")
 
     # Beware: the PictureProduct is serialzed before being returned. Thus,
     # we get a string here.
@@ -38,10 +47,10 @@ def test_picture_workflow(par_dict, notebook_dir):
     assert test_output["img_type"] == "png"
 
 
-def test_table_workflow(par_dict, notebook_dir):
+def test_table_workflow(par_dict, notebook_path):
     # The return of this workflow should be a ODAAstropyTable data product.
 
-    test_path = os.path.join(notebook_dir, "simple_table_workflow.ipynb")
+    test_path = notebook_path("table")
 
     # in contrast to PictureProduct, ODAAstropyTable is not fully serialized.
     # The root key 'output' has a string as argument which is
@@ -53,9 +62,9 @@ def test_table_workflow(par_dict, notebook_dir):
     assert "binary" in data.keys()
 
 
-def test_boolean_workflow(par_dict, notebook_dir):
+def test_boolean_workflow(par_dict, notebook_path):
     # There is no boolean data product. We use ODATextProduct
-    test_path = os.path.join(notebook_dir, "simple_boolean_workflow.ipynb")
+    test_path = notebook_path("boolean")
 
     # This test is straight forward. This data product is a JSON.
     test_output = run(test_path, par_dict)
@@ -63,27 +72,27 @@ def test_boolean_workflow(par_dict, notebook_dir):
     assert test_output["result"] == "FALSE"
 
 
-def test_lc_workflow(par_dict, notebook_dir):
+def test_lc_workflow(par_dict, notebook_path):
     # This returns a LightCurveList
-    test_path = os.path.join(notebook_dir, "simple_lc_workflow.ipynb")
+    test_path = notebook_path("lc")
         
     test_output: str = run(test_path, par_dict)
     assert "result" in test_output.keys()
 
-def test_sleep_workflow(par_dict, notebook_dir):
+def test_sleep_workflow(par_dict, notebook_path):
     # This returns a ODATextProduct
     # This runs for 10 secs and then returns
-    test_path = os.path.join(notebook_dir, "simple_sleeping_workflow.ipynb")
+    test_path = notebook_path("sleeping")
         
     test_output: str = run(test_path, par_dict)
     assert "out_text" in test_output.keys()
     assert "Sleeped".lower() in test_output["out_text"].lower() 
 
-def test_param_workflow(par_dict, notebook_dir):
-    # This workflow returns nothing. It should run, too.
-    test_path = os.path.join(notebook_dir, "simple_param_workflow.ipynb")
+def test_param_workflow(par_dict, notebook_path):
+    # This workflow returns no product. It's kind of useless.
+    # But it's part of 'nb2w-example' written by D. Savchenko.
+    test_path = notebook_path("param")
         
     test_output: str = run(test_path, par_dict)
-    assert "out_text" in test_output.keys()
-    assert "Sleeped".lower() in test_output["out_text"].lower() 
+    assert "result" not in test_output.keys()
 
