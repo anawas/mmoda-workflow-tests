@@ -24,7 +24,7 @@ def par_dict():
 def notebook_path():
     def _notebook_path(notebook_name: str):
         base_dir = os.path.abspath(__file__)
-        base_dir = os.path.join(os.path.dirname(base_dir), "test_notebooks")
+        base_dir = os.path.join(os.path.dirname(base_dir), "test_notebooks/simple")
         return os.path.join(base_dir, f"simple_{notebook_name}_workflow.ipynb")
     
     return _notebook_path
