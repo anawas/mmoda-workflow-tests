@@ -64,7 +64,26 @@ def test_boolean_workflow(par_dict, notebook_dir):
 
 
 def test_lc_workflow(par_dict, notebook_dir):
+    # This returns a LightCurveList
     test_path = os.path.join(notebook_dir, "simple_lc_workflow.ipynb")
         
     test_output: str = run(test_path, par_dict)
     assert "result" in test_output.keys()
+
+def test_sleep_workflow(par_dict, notebook_dir):
+    # This returns a ODATextProduct
+    # This runs for 10 secs and then returns
+    test_path = os.path.join(notebook_dir, "simple_sleeping_workflow.ipynb")
+        
+    test_output: str = run(test_path, par_dict)
+    assert "out_text" in test_output.keys()
+    assert "Sleeped".lower() in test_output["out_text"].lower() 
+
+def test_param_workflow(par_dict, notebook_dir):
+    # This workflow returns nothing. It should run, too.
+    test_path = os.path.join(notebook_dir, "simple_param_workflow.ipynb")
+        
+    test_output: str = run(test_path, par_dict)
+    assert "out_text" in test_output.keys()
+    assert "Sleeped".lower() in test_output["out_text"].lower() 
+
